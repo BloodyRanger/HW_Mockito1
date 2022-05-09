@@ -37,7 +37,7 @@ public class MessageSenderImplTest {
 
     @ParameterizedTest
     @MethodSource("source")
-    public void testMessageSender(String ip, Location location, Country country, String message) {
+    public void testMessageSender(String ip, Location location, Country country, String message, String expected) {
         Map<String, String> headers = new HashMap<>();
         headers.put(MessageSenderImpl.IP_ADDRESS_HEADER, ip);
         GeoService geoService = Mockito.mock(GeoService.class);
@@ -46,14 +46,13 @@ public class MessageSenderImplTest {
         Mockito.when(localizationService.locale(country)).thenReturn(message);
         MessageSenderImpl messageSender = new MessageSenderImpl(geoService, localizationService);
         String result = messageSender.send(headers);
-        String expected = message;
 
         Assertions.assertEquals(expected, result);
     }
 
     private static Stream<Arguments> source() {
-        return Stream.of(Arguments.of(GeoServiceImpl.MOSCOW_IP, new Location("Moscow", Country.RUSSIA, "null", 0), Country.RUSSIA, "Добро пожаловать"),
-                Arguments.of(GeoServiceImpl.NEW_YORK_IP, new Location("New-York", Country.USA, "null", 0), Country.USA, "Welcome"));
+        return Stream.of(Arguments.of(GeoServiceImpl.MOSCOW_IP, new Location("Moscow", Country.RUSSIA, "null", 0), Country.RUSSIA, "Добро пожаловать", "Добро пожаловать"),
+                Arguments.of(GeoServiceImpl.NEW_YORK_IP, new Location("New-York", Country.USA, "null", 0), Country.USA, "Welcome", "Welcome"));
     }
 
 }
